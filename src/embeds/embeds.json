@@ -1,0 +1,41 @@
+{
+    "welcome": {
+        "description": "# **¡𝙱𝙸𝙴𝙽𝚅𝙴𝙽𝙸𝙳@ 𝙰𝙻 𝚂𝙴𝙲𝚃𝙾𝚁 𝚇!** <:radioactivo:1345562429861531648>\n\nUna serie de **2 semanas** de duración, con temática **post-apocaliptica** creada por **Jose90**...\n\nPuedes encontrar una guía para el servidor en <#1344923185610625125>, o encontrar información de qué trata cada canal en la descripción de estos.",
+        "color": "577588",
+        "timestamp": "",
+        "author": {
+            "name": "%author_name%",
+            "icon_url": "%author_iconURL%"
+        },
+        "image": {
+            "url": "https://drygo-assets.vercel.app/uploads/sector-x/design/banner.png"
+        },
+        "footer": {
+            "text": "Sector X  |  Jose90, Exodian Studio",
+            "icon_url": "https://drygo-assets.vercel.app/uploads/sector-x/design/circle.png"
+        },
+        "fields": [
+            {
+                "name": "¿Tienes dudas que responder? ❓",
+                "value": "Si no encuentras suficiente información en los canales del servidor,\nsiéntete libre de preguntar en el canal de dudas.",
+                "inline": false
+            }
+        ]
+    },
+    "whitelist_success": {
+        "description": "# Whitelist › %player% ✨\n\nEl jugador/a %player% fue agregado a la Whitelist",
+        "color": "7c3b81",
+        "timestamp": "",
+        "author": {
+            "name": "%author_name%",
+            "icon_url": "%author_iconURL%"
+        },
+        "thumbnail": {
+            "url": "%player_head%"
+        },
+        "footer": {
+            "text": "drygo.dev",
+            "icon_url": "https://drygo-assets.vercel.app/uploads/drygo/bg-icon.png"
+        }
+    }
+}
