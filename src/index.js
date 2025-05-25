@@ -41,7 +41,7 @@ client.on('ready', () => {
     activities: [{
       type: ActivityType.Custom,
       name: 'custom status',
-      state: 'En Localhost. 💻',
+      state: 'Sigueme en @eldrygo ✨',
     }]
   });
 
