@@ -1,31 +1,36 @@
 const fs = require('fs');
 const path = require('path');
-const { EmbedBuilder } = require('discord.js');
+const {
+    EmbedBuilder,
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle
+} = require('discord.js');
 
-/**
- * Reemplaza variables y secuencias especiales como \n en un string.
- * 
- * @param {string} text 
- * @param {Object} variables 
- * @returns {string}
- */
 function replacePlaceholders(text, variables) {
     if (typeof text !== 'string') return text;
-
     const replaced = text.replace(/%(\w+)%/g, (_, key) => variables[key] ?? `%${key}%`);
-    return replaced.replace(/\\n/g, '\n'); // Convertir '\n' string a salto de línea real
+    return replaced.replace(/\\n/g, '\n');
 }
 
+const styleMap = {
+    primary: ButtonStyle.Primary,
+    secondary: ButtonStyle.Secondary,
+    success: ButtonStyle.Success,
+    danger: ButtonStyle.Danger,
+    link: ButtonStyle.Link
+};
+
 /**
- * Envía un embed al canal especificado, usando los datos del archivo embeds.json.
- * Permite reemplazo de variables y soporte para saltos de línea con \n.
+ * Envía un embed con componentes (botones) desde un archivo JSON.
  * 
- * @param {TextChannel|NewsChannel} channel - Canal al que se enviará el embed.
- * @param {string} embedId - ID del embed en el archivo JSON.
- * @param {Object} [placeholders={}] - Variables para reemplazo dinámico.
- * @returns {Promise<string|null>} - Mensaje de error o null si fue exitoso.
+ * @param {TextChannel|NewsChannel} channel
+ * @param {string} embedId
+ * @param {Object} [placeholders={}]
+ * @param {boolean} [returnMessage=false]
+ * @returns {Promise<Message|string|null>}
  */
-async function sendEmbedFromFile(channel, embedId, placeholders = {}) {
+async function sendEmbedFromFile(channel, embedId, placeholders = {}, returnMessage = false) {
     const embedsPath = path.resolve(__dirname, 'embeds.json');
 
     try {
@@ -45,21 +50,24 @@ async function sendEmbedFromFile(channel, embedId, placeholders = {}) {
         if (data.url) embed.setURL(replacePlaceholders(data.url, placeholders));
         if (data.color) embed.setColor(`#${data.color}`);
         embed.setTimestamp(placeholders.timestamp ? new Date(placeholders.timestamp) : new Date());
+
         if (data.footer?.text) {
             embed.setFooter({
                 text: replacePlaceholders(data.footer.text, placeholders),
                 iconURL: replacePlaceholders(data.footer.icon_url || '', placeholders)
             });
         }
-        if (data.image?.url) embed.setImage(replacePlaceholders(data.image.url, placeholders));
+
+        if (data.image?.url) {
+            embed.setImage(replacePlaceholders(data.image.url, placeholders));
+        }
+
         if (data.thumbnail?.url) {
             const replaced = replacePlaceholders(data.thumbnail.url, placeholders);
-            if (replaced) {
-                embed.setThumbnail(replaced);
-            }
+            if (replaced) embed.setThumbnail(replaced);
         }
-        const author = {};
 
+        const author = {};
         if (data.author?.name) author.name = replacePlaceholders(data.author.name, placeholders);
         if (data.author?.icon_url) {
             const replaced = replacePlaceholders(data.author.icon_url, placeholders);
@@ -69,10 +77,10 @@ async function sendEmbedFromFile(channel, embedId, placeholders = {}) {
             const replaced = replacePlaceholders(data.author.url, placeholders);
             if (replaced) author.url = replaced;
         }
-
         if (Object.keys(author).length > 0) {
             embed.setAuthor(author);
         }
+
         if (Array.isArray(data.fields)) {
             embed.addFields(data.fields.map(f => ({
                 name: replacePlaceholders(f.name, placeholders),
@@ -81,8 +89,32 @@ async function sendEmbedFromFile(channel, embedId, placeholders = {}) {
             })));
         }
 
-        await channel.send({ embeds: [embed] });
-        return null;
+        const components = [];
+
+        // Soporte para botones
+        if (data.components?.buttons?.length > 0) {
+            const row = new ActionRowBuilder();
+
+            for (const btn of data.components.buttons) {
+                const style = styleMap[btn.style?.toLowerCase()] ?? ButtonStyle.Secondary;
+                const button = new ButtonBuilder()
+                    .setLabel(replacePlaceholders(btn.label, placeholders))
+                    .setStyle(style);
+
+                if (style === ButtonStyle.Link) {
+                    button.setURL(replacePlaceholders(btn.url, placeholders));
+                } else {
+                    button.setCustomId(replacePlaceholders(btn.custom_id, placeholders));
+                }
+
+                row.addComponents(button);
+            }
+
+            components.push(row);
+        }
+
+        const message = await channel.send({ embeds: [embed], components });
+        return returnMessage ? message : null;
     } catch (err) {
         console.error('Failed on sending embed:', err);
         return '❌ Error al procesar o enviar el embed.';

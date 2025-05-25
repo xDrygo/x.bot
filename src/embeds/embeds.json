@@ -37,5 +37,87 @@
             "text": "drygo.dev",
             "icon_url": "https://drygo-assets.vercel.app/uploads/drygo/bg-icon.png"
         }
+    },
+    "ticket-open": {
+        "description": "# Sistema de Tickets <:tickets:1376310446482788576>\n\nHaz click en el boton de **Crear Ticket** para abrir uno y ser atendido por el **staff del servidor**.",
+        "color": "ffeb7b",
+        "footer": {
+            "text": "drygo.dev",
+            "icon_url": "https://drygo-assets.vercel.app/uploads/drygo/bg-icon.png"
+        },
+        "components": {
+            "buttons": [
+                {
+                    "label": "🎫 Crear Ticket",
+                    "custom_id": "create-ticket",
+                    "style": "secondary"
+                }
+            ]
+        }
+    },
+    "ticket-support": {
+        "description": "# Sistema de Tickets <:tickets:1376310446482788576>\n\nBienvenido %user_mention% al Ticket, serás respondido por un miembro del staff en unos minutos, recuerda proporcionar toda la informacion requerida para poder resolver tu caso.",
+        "color": "ffeb7b",
+        "author": {
+            "name": "%author_name%",
+            "icon_url": "%author_iconURL%"
+        },
+        "footer": {
+            "text": "drygo.dev",
+            "icon_url": "https://drygo-assets.vercel.app/uploads/drygo/bg-icon.png"
+        },
+        "components": {
+            "buttons": [
+                {
+                    "label": "🔒 Cerrar Ticket",
+                    "custom_id": "close-ticket",
+                    "style": "secondary"
+                }
+            ]
+        }
+    },
+    "ticket-confirmclose": {
+        "description": "# Cerrar Ticket 🔒\n\n¿Estás seguro de cerrar el ticket?",
+        "color": "ff4444",
+        "footer": {
+            "text": "drygo.dev",
+            "icon_url": "https://drygo-assets.vercel.app/uploads/drygo/bg-icon.png"
+        },
+        "components": {
+            "buttons": [
+                {
+                    "label": "🔒 Confirmar",
+                    "custom_id": "confirm-close",
+                    "style": "secondary"
+                },
+                {
+                    "label": "❌ Cancelar",
+                    "custom_id": "cancel-close",
+                    "style": "secondary"
+                }
+            ]
+        }
+    },
+    "ticket-closed": {
+        "description": "# Ticket Cerrado 🔒\n\nEste ticket ha sido cerrado por lo que solo los miembros del staff podrán leerlo.",
+        "color": "ffeb7b",
+        "footer": {
+            "text": "drygo.dev",
+            "icon_url": "https://drygo-assets.vercel.app/uploads/drygo/bg-icon.png"
+        },
+        "components": {
+            "buttons": [
+                {
+                    "label": "🔓 Re-Abrir",
+                    "custom_id": "reopen-ticket",
+                    "style": "secondary"
+                },
+                {
+                    "label": "🗑️ Borrar",
+                    "custom_id": "delete-ticket",
+                    "style": "secondary"
+                }
+            ]
+        }
     }
 }

@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { addPlayerToWhitelist } = require('./managers/WhitelistManager');
-const { EmbedBuilder } = require('discord.js');
+const { PermissionFlagsBits } = require('discord.js');
 const { sendEmbedFromFile } = require('./embeds/EmbedManager');
 const fs = require('fs');
 const path = require('path');
@@ -33,7 +33,16 @@ async function registerCommands(client) {
         option.setName('embedid')
           .setDescription('ID del embed a enviar desde embeds.json.')
           .setRequired(true)
-          .setAutocomplete(true))  // Autocompletado activado
+          .setAutocomplete(true)),
+
+    new SlashCommandBuilder()
+      .setName('setup-tickets')
+      .setDescription('Envía el panel para crear tickets')
+      .addChannelOption(option =>
+        option.setName('channel')
+          .setDescription('Canal donde enviar el embed.')
+          .setRequired(true))
+      .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
   ];
 
   // Filtra los comandos para solo actualizar los que no están registrados
@@ -111,6 +120,17 @@ async function handleInteraction(interaction) {
         await interaction.editReply({ content: error });
       } else {
         await interaction.editReply({ content: `✅ Embed enviado a ${channel}.` });
+      }
+    }
+
+    if (commandName === 'setup-tickets') {
+      const channel = options.getChannel('channel');
+
+      const error = await sendEmbedFromFile(channel, "ticket-open");
+      if (error) {
+        await interaction.editReply({ content: error });
+      } else {
+        await interaction.editReply({ content: `✅ Ticket Embed enviado a ${channel}.` });
       }
     }
   }

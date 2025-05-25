@@ -2,6 +2,7 @@ const { Client, GatewayIntentBits, Partials, ActivityType, Events } = require('d
 const { registerCommands } = require('./commands');
 const { handleInteraction } = require('./commands');
 const { sendEmbedFromFile } = require('./embeds/EmbedManager');
+const { handleTicketButtons } = require('./managers/TicketButtonManager');
 const express = require('express');
 require('dotenv').config();
 
@@ -40,7 +41,7 @@ client.on('ready', () => {
     activities: [{
       type: ActivityType.Custom,
       name: 'custom status',
-      state: 'En Desarrollo. 🔧',
+      state: 'En Localhost. 💻',
     }]
   });
 
@@ -50,6 +51,9 @@ client.on('ready', () => {
 client.on('interactionCreate', async interaction => {
   if (interaction.isCommand() || interaction.isAutocomplete()) {
     await handleInteraction(interaction);
+  }
+  if (interaction.isButton()) {
+    await handleTicketButtons(interaction);
   }
 });
 
