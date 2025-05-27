@@ -121,4 +121,82 @@ async function sendEmbedFromFile(channel, embedId, placeholders = {}, returnMess
     }
 }
 
-module.exports = { sendEmbedFromFile };
+async function sendEmbedReply(interaction, embedId, placeholders = {}) {
+    const embedsPath = require('path').resolve(__dirname, 'embeds.json');
+    const fs = require('fs');
+    const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+
+    const styleMap = {
+        primary: ButtonStyle.Primary,
+        secondary: ButtonStyle.Secondary,
+        success: ButtonStyle.Success,
+        danger: ButtonStyle.Danger,
+        link: ButtonStyle.Link
+    };
+
+    function replacePlaceholders(text, vars) {
+        if (typeof text !== 'string') return text;
+        const replaced = text.replace(/%(\w+)%/g, (_, key) => vars[key] ?? `%${key}%`);
+        return replaced.replace(/\\n/g, '\n');
+    }
+
+    const fileContent = await fs.promises.readFile(embedsPath, 'utf8');
+    const embeds = JSON.parse(fileContent);
+    const data = embeds[embedId];
+    if (!data) return null;
+
+    const embed = new EmbedBuilder();
+
+    if (data.title) embed.setTitle(replacePlaceholders(data.title, placeholders));
+    if (data.description) embed.setDescription(replacePlaceholders(data.description, placeholders));
+    if (data.url) embed.setURL(replacePlaceholders(data.url, placeholders));
+    if (data.color) embed.setColor(`#${data.color}`);
+    embed.setTimestamp(new Date());
+
+    if (data.footer?.text) {
+        embed.setFooter({
+            text: replacePlaceholders(data.footer.text, placeholders),
+            iconURL: replacePlaceholders(data.footer.icon_url || '', placeholders)
+        });
+    }
+
+    if (data.image?.url) embed.setImage(replacePlaceholders(data.image.url, placeholders));
+    if (data.thumbnail?.url) embed.setThumbnail(replacePlaceholders(data.thumbnail.url, placeholders));
+
+    const author = {};
+    if (data.author?.name) author.name = replacePlaceholders(data.author.name, placeholders);
+    if (data.author?.icon_url) author.iconURL = replacePlaceholders(data.author.icon_url, placeholders);
+    if (data.author?.url) author.url = replacePlaceholders(data.author.url, placeholders);
+    if (Object.keys(author).length > 0) embed.setAuthor(author);
+
+    if (Array.isArray(data.fields)) {
+        embed.addFields(data.fields.map(f => ({
+            name: replacePlaceholders(f.name, placeholders),
+            value: replacePlaceholders(f.value, placeholders),
+            inline: f.inline || false
+        })));
+    }
+
+    const components = [];
+    if (data.components?.buttons?.length > 0) {
+        const row = new ActionRowBuilder();
+        for (const btn of data.components.buttons) {
+            const style = styleMap[btn.style?.toLowerCase()] ?? ButtonStyle.Secondary;
+            const button = new ButtonBuilder()
+                .setLabel(replacePlaceholders(btn.label, placeholders))
+                .setStyle(style);
+            if (style === ButtonStyle.Link) {
+                button.setURL(replacePlaceholders(btn.url, placeholders));
+            } else {
+                button.setCustomId(replacePlaceholders(btn.custom_id, placeholders));
+            }
+            row.addComponents(button);
+        }
+        components.push(row);
+    }
+
+    await interaction.reply({ embeds: [embed], components });
+    return interaction.fetchReply();
+}
+
+module.exports = { sendEmbedFromFile, sendEmbedReply };

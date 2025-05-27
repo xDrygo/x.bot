@@ -9,10 +9,6 @@ const path = require('path');
 async function registerCommands(client) {
   console.log('Registering commands...');
 
-  // Obtén los comandos ya registrados
-  const currentCommands = await client.application.commands.fetch();
-  const commandNames = currentCommands.map(cmd => cmd.name);
-
   const commands = [
     new SlashCommandBuilder()
       .setName('whitelist')
@@ -44,17 +40,7 @@ async function registerCommands(client) {
           .setRequired(true))
       .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
   ];
-
-  // Filtra los comandos para solo actualizar los que no están registrados
-  const newCommands = commands.filter(cmd => !commandNames.includes(cmd.name));
-
-  // Registra solo los nuevos comandos
-  if (newCommands.length > 0) {
-    await client.application.commands.set(newCommands);
-    console.log(`Registered Commands: ${newCommands.map(cmd => cmd.name).join(', ')}`);
-  } else {
-    console.log('No new commands have been registered.');
-  }
+  await client.application.commands.set(commands);
 
   console.log('Commands updated successfully.');
 }
