@@ -11,9 +11,12 @@ async function handleTicketButtons(interaction) {
         await interaction.deferReply({ flags: 64 });
 
         const safeUsername = user.username.toLowerCase().replace(/[^a-z0-9_]/g, '_');
+        const closedCategoryId = process.env.TICKET_CLOSED_CATEGORY_ID;
         const existing = guild.channels.cache.find(c =>
-            c.name === `🎫︙ticket-${safeUsername}`
+            c.name === `🎫︙ticket-${safeUsername}` &&
+            c.parentId !== closedCategoryId // Asegura que no esté en la categoría de cerrados
         );
+
         if (existing) {
             return interaction.editReply({
                 content: '❌ Ya tienes un ticket abierto.',
