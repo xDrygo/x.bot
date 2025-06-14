@@ -3,6 +3,7 @@ const { registerCommands } = require('./commands');
 const { handleInteraction } = require('./commands');
 const { sendEmbedFromFile } = require('./embeds/EmbedManager');
 const { handleTicketButtons } = require('./managers/TicketButtonManager');
+const VoiceChannelManager = require('./managers/VoiceChannelManager');
 const express = require('express');
 require('dotenv').config();
 
@@ -23,6 +24,7 @@ const client = new Client({
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildVoiceStates,
   ],
   partials: [
     Partials.Message,
@@ -45,7 +47,10 @@ client.on('ready', () => {
     }]
   });
 
+  console.log('[MAIN] Instanciando VoiceChannelManager...');
+  new VoiceChannelManager(client);
   registerCommands(client);
+
 });
 
 client.on('interactionCreate', async interaction => {

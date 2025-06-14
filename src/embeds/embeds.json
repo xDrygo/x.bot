@@ -11,8 +11,8 @@
             "url": "https://drygo-assets.vercel.app/uploads/sector-x/design/banner.png"
         },
         "footer": {
-            "text": "Sector X  |  Jose90, Exodian Studio",
-            "icon_url": "https://drygo-assets.vercel.app/uploads/sector-x/design/circle.png"
+            "text": "drygo.dev",
+            "icon_url": "https://drygo-assets.vercel.app/uploads/drygo/bg-icon.png"
         },
         "fields": [
             {
@@ -118,6 +118,18 @@
                     "style": "secondary"
                 }
             ]
+        }
+    },
+    "vc-create": {
+        "description": "# Canal de Voz de %owner_mention% 🎙️\n\nRecuerda seguir las mismas reglas de los canales de voz, respetando al dueño original de estos.",
+        "color": "5baab0",
+        "author": {
+            "name": "%author_name%",
+            "icon_url": "%author_iconURL%"
+        },
+        "footer": {
+            "text": "drygo.dev",
+            "icon_url": "https://drygo-assets.vercel.app/uploads/drygo/bg-icon.png"
         }
     }
 }
